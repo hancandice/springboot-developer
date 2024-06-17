@@ -20,8 +20,9 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest
 @AutoConfigureMockMvc
 class TestControllerTest {
+
     @Autowired
-    protected MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
     private WebApplicationContext context;
@@ -30,26 +31,27 @@ class TestControllerTest {
     private MemberRepository memberRepository;
 
     @BeforeEach
-    public void setMockMvc() {
+    public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
     @AfterEach
-    public void cleanUp() {
+    public void tearDown() {
         memberRepository.deleteAll();
     }
 
     @DisplayName("getAllMembers: succeed on article display")
     @Test
     public void getAllMembers() throws Exception {
-        // given
+        // Given
         final String url = "/test";
         Member savedMember = memberRepository.save(new Member(1L, "Jeejee Hahn"));
 
-        // when
-        final ResultActions result = mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON));
+        // When
+        final ResultActions result = mockMvc.perform(get(url)
+            .accept(MediaType.APPLICATION_JSON));
 
-        // then
+        // Then
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id").value(savedMember.getId()))
             .andExpect(jsonPath("$[0].name").value(savedMember.getName()));
