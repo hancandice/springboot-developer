@@ -2,6 +2,7 @@ package me.jeehahn.springbootdeveloper.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +79,6 @@ class BlogApiControllerTest {
         assertThat(articles.get(0).getContent()).isEqualTo(content);
     }
 
-
     @DisplayName("findAllArticles: Successfully retrieves all articles")
     @Test
     public void findAllArticles() throws Exception {
@@ -113,8 +113,57 @@ class BlogApiControllerTest {
         assertThat(articles.get(0).getContent()).isEqualTo(content1);
         assertThat(articles.get(1).getTitle()).isEqualTo(title2);
         assertThat(articles.get(1).getContent()).isEqualTo(content2);
-
     }
 
+    @DisplayName("findArticleById: Successfully retrieves an article by ID")
+    @Test
+    public void findArticleById() throws Exception {
 
+        // Given
+        final String url = "/api/articles";
+        final String title = "title";
+        final String content = "content";
+
+        Article article = Article.builder().title(title).content(content).build();
+        Article savedArticle = blogRepository.save(article);
+
+        // When
+        ResultActions result = mockMvc.perform(get(url + "/" + savedArticle.getId())
+            .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value(title))
+            .andExpect(jsonPath("$.content").value(content));
+
+        Article foundArticle = blogRepository.findById(savedArticle.getId()).orElse(null);
+        assertThat(foundArticle).isNotNull();
+        assertThat(foundArticle.getTitle()).isEqualTo(title);
+        assertThat(foundArticle.getContent()).isEqualTo(content);
+    }
+
+    @DisplayName("deleteArticleById: Successfully deletes an article by ID")
+    @Test
+    public void deleteArticleById() throws Exception {
+
+        // Given
+        final String url = "/api/articles";
+        final String title = "title";
+        final String content = "content";
+
+        Article article = Article.builder().title(title).content(content).build();
+        Article savedArticle = blogRepository.save(article);
+
+        // When
+        ResultActions result = mockMvc.perform(delete(url + "/" + savedArticle.getId())
+            .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value(title))
+            .andExpect(jsonPath("$.content").value(content));;
+
+        List<Article> articles = blogRepository.findAll();
+        assertThat(articles).isEmpty();
+    }
 }

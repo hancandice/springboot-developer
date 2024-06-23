@@ -1,12 +1,11 @@
 package me.jeehahn.springbootdeveloper.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.jeehahn.springbootdeveloper.domain.Article;
 import me.jeehahn.springbootdeveloper.dto.AddArticleRequest;
 import me.jeehahn.springbootdeveloper.repository.BlogRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -21,5 +20,14 @@ public class BlogService {
 
     public List<Article> findAll() {
         return blogRepository.findAll();
+    }
+
+    public Article findById(Long id) {
+        return blogRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Article not found with id: " + id));
+    }
+
+    public void delete(Long id) {
+        blogRepository.deleteById(id);
     }
 }
