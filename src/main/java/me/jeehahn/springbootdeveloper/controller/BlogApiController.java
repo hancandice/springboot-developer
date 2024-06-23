@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class BlogApiController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request) {
         Article savedArticle = blogService.save(request);
-        return ResponseEntity.ok(savedArticle);
+        URI location = URI.create(String.format("/api/articles/%s", savedArticle.getId()));
+        return ResponseEntity.created(location).body(savedArticle);
     }
 }
