@@ -6,6 +6,8 @@ import me.jeehahn.springbootdeveloper.dto.AddArticleRequest;
 import me.jeehahn.springbootdeveloper.repository.BlogRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class BlogService {
@@ -15,5 +17,9 @@ public class BlogService {
     public Article save(AddArticleRequest request) {
         Article article = request.toEntity();
         return blogRepository.save(article);
+    }
+
+    public List<Article> findAll() {
+        return blogRepository.findAll();
     }
 }
