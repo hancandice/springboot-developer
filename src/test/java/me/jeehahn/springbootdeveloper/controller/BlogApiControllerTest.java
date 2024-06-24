@@ -1,16 +1,18 @@
 package me.jeehahn.springbootdeveloper.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import me.jeehahn.springbootdeveloper.domain.Article;
 import me.jeehahn.springbootdeveloper.dto.AddArticleRequest;
+import me.jeehahn.springbootdeveloper.dto.UpdateArticleRequest;
 import me.jeehahn.springbootdeveloper.repository.BlogRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -165,5 +167,42 @@ class BlogApiControllerTest {
 
         List<Article> articles = blogRepository.findAll();
         assertThat(articles).isEmpty();
+    }
+
+    @DisplayName("updateArticleById: Successfully updates an article by ID")
+    @Test
+    public void updateArticleById() throws Exception {
+
+        // Given
+        final String url = "/api/articles";
+        final String title = "original title";
+        final String content = "original content";
+        final String updatedTitle = "updated title";
+        final String updatedContent = "updated content";
+
+        Article article = Article.builder().title(title).content(content).build();
+        Article savedArticle = blogRepository.save(article);
+
+        UpdateArticleRequest updateRequest = new UpdateArticleRequest();
+        updateRequest.setTitle(updatedTitle);
+        updateRequest.setContent(updatedContent);
+
+        // Serialize to JSON
+        final String requestBody = objectMapper.writeValueAsString(updateRequest);
+
+        // When
+        ResultActions result = mockMvc.perform(put(url + "/" + savedArticle.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody));
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value(updatedTitle))
+            .andExpect(jsonPath("$.content").value(updatedContent));
+
+        Article updatedArticle = blogRepository.findById(savedArticle.getId()).orElse(null);
+        assertThat(updatedArticle).isNotNull();
+        assertThat(updatedArticle.getTitle()).isEqualTo(updatedTitle);
+        assertThat(updatedArticle.getContent()).isEqualTo(updatedContent);
     }
 }

@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.jeehahn.springbootdeveloper.dto.UpdateArticleRequest;
 
 @Entity
 @Getter
@@ -31,5 +32,10 @@ public class Article {
     public Article(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void update(UpdateArticleRequest request) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
     }
 }
