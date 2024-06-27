@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Thymeleaf Example</title>
+</head>
+<body>
+
+<h1>Thymeleaf Study</h1>
+
+<!-- Display the current date in the format yyyy-MM-dd -->
+<p th:text="${#temporals.format(currentDate, 'yyyy-MM-dd')}">[Current Date]</p>
+
+<!-- Section to display person details if needed in the future -->
+<div th:if="${person != null}">
+  <h2>Person Details</h2>
+  <p>Name: <span th:text="${person.name}">[Name]</span></p>
+  <p>Age: <span th:text="${person.age}">[Age]</span></p>
+  <p>Hobbies:</p>
+  <ul>
+    <li th:each="hobby : ${person.hobbies}" th:text="${hobby}">[Hobby]</li>
+  </ul>
+</div>
+
+</body>
+</html>
