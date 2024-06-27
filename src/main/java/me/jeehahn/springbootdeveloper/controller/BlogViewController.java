@@ -1,13 +1,16 @@
 package me.jeehahn.springbootdeveloper.controller;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import me.jeehahn.springbootdeveloper.domain.Article;
 import me.jeehahn.springbootdeveloper.dto.ArticleListViewResponse;
+import me.jeehahn.springbootdeveloper.dto.ArticleViewResponse;
 import me.jeehahn.springbootdeveloper.service.BlogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RequiredArgsConstructor
 @Controller
@@ -20,6 +23,19 @@ public class BlogViewController {
         List<ArticleListViewResponse> articles = mapToArticleListViewResponses(blogService.findAll());
         model.addAttribute("articles", articles);
         return "articleList";
+    }
+
+    @GetMapping("/articles/{id}")
+    public String getArticleById(@PathVariable Long id, Model model) {
+        Optional<Article> articleOpt = Optional.ofNullable(blogService.findById(id));
+        if (articleOpt.isPresent()) {
+            Article article = articleOpt.get();
+            ArticleViewResponse articleViewResponse = new ArticleViewResponse(article);
+            model.addAttribute("article", articleViewResponse);
+            return "article";
+        } else {
+            return "error/404";
+        }
     }
 
     private List<ArticleListViewResponse> mapToArticleListViewResponses(List<Article> articles) {
