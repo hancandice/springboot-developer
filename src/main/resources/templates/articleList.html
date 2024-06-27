@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Article List</title>
+</head>
+<body>
+<h1>Articles</h1>
+<ul>
+  <li th:each="article : ${articles}">
+    <h2 th:text="${article.title}">Article Title</h2>
+    <p th:text="${article.content}">Article Content</p>
+    <a th:href="@{api/articles/{id}(id=${article.id})}">Read more</a>
+  </li>
+</ul>
+</body>
+</html>
