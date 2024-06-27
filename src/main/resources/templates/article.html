@@ -9,6 +9,18 @@
 <p th:text="${article.content}">Article Content</p>
 <p><strong>Created at:</strong> <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}">Created Date</span></p>
 <p><strong>Last updated at:</strong> <span th:text="${#temporals.format(article.updatedAt, 'yyyy-MM-dd HH:mm')}">Updated Date</span></p>
+
+<button id="delete-btn">Delete Article</button>
+
 <a href="/articles">Back to Articles</a>
+
+<!-- Modify Button -->
+<a th:href="@{/new-article(id=${article.id})}">
+  <button>Modify Article</button>
+</a>
+
+<input type="hidden" id="article-id" th:value="${article.id}">
+
+<script src="/js/article.js"></script>
 </body>
 </html>
