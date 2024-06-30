@@ -12,6 +12,11 @@
   <button>Create Article</button>
 </a>
 
+<!-- Logout Button -->
+<form id="logoutForm" action="/logout" method="get">
+  <button type="submit">Logout</button>
+</form>
+
 <ul>
   <li th:each="article : ${articles}">
     <h2 th:text="${article.title}">Article Title</h2>
