@@ -1,0 +1,33 @@
+package me.jeehahn.springbootdeveloper.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Entity
+@Table(name = "refresh_tokens")
+public class RefreshToken {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
+    @Column(name = "user_id", nullable = false, unique = true)
+    private Long userId;
+
+    @Column(name = "refresh_token", nullable = false, unique = true)
+    private String refreshToken;
+
+    public RefreshToken(Long userId, String refreshToken) {
+        this.userId = userId;
+        this.refreshToken = refreshToken;
+    }
+
+    public RefreshToken update(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
+        return this;
+    }
+}
